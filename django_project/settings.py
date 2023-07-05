@@ -11,6 +11,10 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
 from pathlib import Path
+from environs import Env
+
+env = Env()
+env.read_env()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -19,10 +23,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-dw$5hinujgao%k)-gitzu$+5*@gt)he$6w2o+(%yw#tg=q+8%9'
+SECRET_KEY = env.str("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env.bool("DEBUG", defaul=False)
 
 ALLOWED_HOSTS = [".herokuapp.com", "localhost", "127.0.0.1"]
 
@@ -38,6 +42,7 @@ INSTALLED_APPS = [
     # Local
     "accounts.apps.AccountsConfig",
     "pages.apps.PagesConfig",
+    "articles.apps.ArticlesConfig",
     # 3rd Party
     "crispy_forms",
     "crispy_bootstrap5",
@@ -83,6 +88,7 @@ DATABASES = {
     }
 }
 
+
 # Configure custom user model
 AUTH_USER_MODEL = "accounts.CustomUser"
 
@@ -91,7 +97,14 @@ LOGIN_REDIRECT_URL = "home"
 LOGOUT_REDIRECT_URL = "home"
 
 # Email backend configuration
-EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+DEFAULT_FROM_EMAIL = "Mdivana Newspaper Team"
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_HOST_USER = "nikamdivani1@gmail.com"
+EMAIL_HOST_PASSWORD = env.str("EMAIL_HOST_PASSWORD")
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
@@ -116,11 +129,13 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+
+# Time zone configuration
+USE_TZ = True
+TIME_ZONE = "Asia/Tbilisi"
+
 
 USE_I18N = True
-
-USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
